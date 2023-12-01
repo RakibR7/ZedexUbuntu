@@ -1,0 +1,104 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Discord-Themed File Upload</title>
+<!-- Authors: Emeka and Rakib -->
+<style>
+  body {
+    font-family: 'Whitney', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #23272A;
+    color: #99AAB5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+
+  .container {
+    text-align: center;
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #2C2F33;
+    box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .title {
+    font-size: 24px;
+    color: #FFFFFF;
+    margin-bottom: 20px;
+  }
+
+  .file-upload-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .btn {
+    border: 1px solid #7289DA;
+    background-color: #7289DA;
+    color: #FFFFFF;
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.3s, transform 0.3s;
+  }
+
+  .btn:hover {
+    background-color: #677BC4;
+    transform: scale(1.05);
+  }
+
+  #fileName {
+    color: #99AAB5;
+    min-width: 200px;
+    display: inline-block;
+    text-align: left;
+  }
+
+  #fileInput {
+    display: none;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="title">Files</div>
+  <div class="file-upload-container">
+    <input type="file" id="fileInput" />
+    <button class="btn" onclick="document.getElementById('fileInput').click()">Choose File</button>
+    <span id="fileName">No file chosen</span>
+    <button class="btn" onclick="uploadFile()">Upload</button>
+  </div>
+</div>
+
+<script>
+  const fileInput = document.getElementById('fileInput');
+  const fileNameDisplay = document.getElementById('fileName');
+
+  fileInput.addEventListener('change', function() {
+    fileNameDisplay.textContent = fileInput.files.length > 0 ? fileInput.files[0].name : 'No file chosen';
+  });
+
+  function uploadFile() {
+    if (fileInput.files.length > 0) {
+      // Here you would typically use fetch or XMLHttpRequest to send the file to your server
+      alert('File upload started. This is a mock upload.');
+      // Mock upload delay
+      setTimeout(function() {
+        alert('File uploaded successfully.');
+      }, 1500);
+    } else {
+      alert('Please choose a file first.');
+    }
+  }
+</script>
+</body>
+</html>
