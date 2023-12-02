@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord-Themed File Upload</title>
+    <!-- Authors: Emeka and Rakib -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <div class="title">Files</div>
+    <div class="file-upload-container">
+        <input type="file" id="fileInput" />
+        <button class="btn" onclick="document.getElementById('fileInput').click()">Choose File</button>
+        <span id="fileName">No file chosen</span>
+        <button class="btn" onclick="uploadFile()">Upload</button>
+
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
