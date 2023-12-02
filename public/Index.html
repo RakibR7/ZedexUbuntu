@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord-Themed File Upload</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <div class="title">Files</div>
+    <div class="file-upload-container">
+        <input type="file" id="fileInput" />
+        <button class="btn" onclick="document.getElementById('fileInput').click()">Choose File</button>
+        <span id="fileName">No file chosen</span>
+        <button class="btn" onclick="uploadFile()">Upload</button>
+        <button class="btn" onclick="reassembleFile()">Download</button>
+        <button class="btn" onclick="runBashScript()">Check integrity </button> <!-- New Bash Script Button -->
+        <button class="btn" onclick="runZshScript()">Clean Chunks</button> <!-- New Zsh Script Button -->
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
