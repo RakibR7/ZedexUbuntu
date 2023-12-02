@@ -34,96 +34,86 @@ Following recent changes announced by Discord regarding external CDN links, the 
 
 
 
-ROAD TO SUCCESS ---------------------------------
 
 
-Creating a website that allows users to upload files to Discord, bypasses the file size limit by splitting the files into chunks, and wraps them in a virtual file system involves several steps and components. You mentioned you have a server in NodeJS and a frontend in React. Below is a step-by-step guide to set up such a system:
-1. Setting Up the Backend (Node.js)
 
-1.1. Initialize Node.js Project
 
-    Create a new directory for your project.
-    Initialize a Node.js project using npm init.
-    Install necessary packages like express for the server, discord.js for Discord interaction, and multer for handling file uploads.
 
-1.2. Implement File Chunking
 
-    Write a function to split large files into smaller chunks. Each chunk should be within Discord's file size limit.
-    Ensure that each chunk is labeled to reconstruct the original file later.
 
-1.3. Discord Bot Setup
 
-    Create a Discord bot via the Discord Developer Portal.
-    Add the bot to your server and save the bot token.
-    Use discord.js to authenticate your bot in your Node.js application.
+ROAD TO SUCCESS ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-1.4. File Upload Endpoint
+I can guide you through the process of setting up a local server using Node.js to run your HTML file designed with a Discord theme. Here's a step-by-step guide:
+Step 1: Install Node.js
 
-    Create an endpoint in your Express server to handle file uploads.
-    Use multer to receive the file and then process it into chunks.
-    Implement logic to upload each chunk to a Discord channel using your bot. Store metadata to track these chunks.
+If you haven't already installed Node.js, you'll need to do so. Node.js is a JavaScript runtime that lets you run JavaScript on the server side.
 
-1.5. Virtual File System
+    Download Node.js: Go to the Node.js website and download the installer for your operating system.
+    Install Node.js: Run the downloaded installer and follow the prompts to install Node.js and NPM (Node Package Manager).
 
-    Implement a system to manage the metadata of files and their chunks, possibly using a database.
-    This system should track which chunks belong to which file and how to reassemble them.
+Step 2: Create a New Node.js Project
 
-2. Setting Up the Frontend (React)
+    Create a Project Folder: Make a new folder on your computer where you want your project to live.
+    Initialize the Project: Open a terminal or command prompt, navigate to your project folder, and run:
 
-2.1. Initialize React Project
+    bash
 
-    Create a new React project using Create React App.
-    Install necessary packages like axios for making HTTP requests.
+    npm init -y
 
-2.2. File Upload Interface
+    This command will create a package.json file in your project folder, which will keep track of your project dependencies.
 
-    Create a user interface for file uploads. This should include a form for file selection.
-    Implement functionality to send the selected file to your backend server for processing and upload to Discord.
+Step 3: Install Express
 
-2.3. File Retrieval Interface
+Express is a minimal and flexible Node.js web application framework that provides a robust set of features for web applications.
 
-    Provide an interface to view and download the files stored on Discord.
-    Implement functionality to request the backend for file reconstruction from chunks and initiate a download.
+    Install Express: In your project folder, run:
 
-3. Running the Application
+    bash
 
-3.1. Start the Backend Server
+    npm install express
 
-    Run your Node.js server.
+    This command will install Express and add it to your package.json file.
 
-3.2. Start the React Application
+Step 4: Set Up Your Server
 
-    Start your React application so that it's accessible from a browser.
+    Create a Server File: In your project folder, create a new file named server.js.
+    Write Server Code: Open server.js in a text editor and add the following code:
 
-3.3. Testing
+    javascript
 
-    Perform thorough testing to ensure files are uploading, chunking, storing, and downloading correctly.
+    const express = require('express');
+    const app = express();
+    const path = require('path');
 
-4. Deployment
+    // Serve static files from the "public" directory
+    app.use(express.static('public'));
 
-4.1. Deploy the Backend
+    app.get('/', (req, res) => {
+      res.sendFile(path.join(__dirname, '/public/discord_theme_upload.html'));
+    });
 
-    Choose a cloud service provider (like Heroku, AWS, etc.).
-    Deploy your Node.js application to the cloud.
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
 
-4.2. Deploy the Frontend
+Step 5: Organize Your HTML File
 
-    Deploy your React application. This can be done on platforms like Netlify or Vercel.
+    Create a Public Folder: Inside your project folder, create a new folder named public.
+    Move Your HTML File: Move your Discord-themed HTML file (discord_theme_upload.html) into the public folder.
 
-4.3. Environment Variables and Security
+Step 6: Run Your Server
 
-    Ensure that sensitive information like Discord tokens is stored in environment variables and not exposed.
+    Start the Server: In your terminal or command prompt, navigate to your project folder and run:
 
-5. Monitoring and Maintenance
+    bash
 
-    Regularly monitor your application for any issues or bugs.
-    Keep your Node.js and React applications updated with the latest packages.
+    node server.js
 
-Notes
+    Open in Browser: Open a web browser and go to http://localhost:3000. You should see your Discord-themed HTML page.
 
-    Be aware of Discord's Terms of Service. Using Discord as a cloud storage service might violate these terms.
-    Ensure you have error handling for network issues, file corruption, and Discord API limits.
-    Consider adding encryption for the files for additional security.
+Step 7: Make Changes as Needed
 
-This is a high-level overview. Each step will require detailed coding and thorough testing to ensure functionality and reliability.
+    You can modify your HTML, CSS, and JavaScript files as needed. Just refresh your browser to see the changes.
 
