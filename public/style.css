@@ -7,6 +7,7 @@ body {
     align-items: center;
     height: 100vh;
     margin: 0;
+    overflow: hidden; /* Hide overflow to maintain the design */
 }
 
 .container {
@@ -14,13 +15,20 @@ body {
     border-radius: 8px;
     padding: 20px;
     background-color: #2C2F33;
-    box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.5); /* More pronounced shadow for depth */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Smooth transitions for interaction */
+}
+
+.container:hover {
+    transform: translateY(-5px); /* Slight lift effect on hover */
+    box-shadow: 0 6px 15px 0 rgba(0, 0, 0, 0.5); /* Increased shadow on hover for a 'raised' effect */
 }
 
 .title {
     font-size: 24px;
     color: #FFFFFF;
     margin-bottom: 20px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Text shadow for depth */
 }
 
 .file-upload-container {
@@ -28,6 +36,11 @@ body {
     align-items: center;
     gap: 10px;
     justify-content: center;
+    transition: all 0.2s ease-in-out; /* Smooth transition for the container */
+}
+
+.file-upload-container:hover {
+    transform: scale(1.02); /* Slight scale effect on hover */
 }
 
 .btn {
@@ -39,12 +52,13 @@ body {
     font-size: 16px;
     cursor: pointer;
     outline: none;
-    transition: background-color 0.3s, transform 0.3s;
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s; /* Include shadow in the transition */
 }
 
 .btn:hover {
     background-color: #677BC4;
-    transform: scale(1.05);
+    transform: translateY(-3px); /* Button raise effect on hover */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4); /* Shadow effect for depth */
 }
 
 #fileName {
@@ -52,42 +66,40 @@ body {
     min-width: 200px;
     display: inline-block;
     text-align: left;
+    transition: color 0.3s; /* Smooth color transition */
+}
+
+#fileName:hover {
+    color: #FFFFFF; /* Highlight file name on hover */
 }
 
 #fileInput {
     display: none;
 }
-loader {
-    border: 5px solid #f3f3f3;
-    border-top: 5px solid #3498db;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    animation: spin 2s linear infinite;
-    display: inline-block;
-    vertical-align: middle;
+
+/* Additional global animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
-#snowflakes-container {
+
+/* Apply the fadeIn animation to the container */
+.container {
+    animation: fadeIn 1s ease-in-out;
+}
+
+/* Add a gradient to the background for a more dynamic look */
+body::after {
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-}
-
-.snowflake {
-    position: absolute;
-    top: -10px;
-    color: #fff;
-    opacity: 0.8;
-    font-size: 1em;
-    line-height: 1em;
-    pointer-events: none;
-}
-
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(145deg, #23272a, #2c2f33);
+    z-index: -1;
 }

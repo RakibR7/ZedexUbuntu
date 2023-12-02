@@ -109,3 +109,21 @@ function createSnowflake() {
 
 // Create a new snowflake every 300 milliseconds
 setInterval(createSnowflake, 300);
+
+    // Function to add multiple snowflakes
+    function addSnowflakes(containerClass, snowflakeClass, count) {
+    const container = document.querySelector(containerClass);
+    for (let i = 0; i < count; i++) {
+    const snowflake = document.createElement('div');
+    snowflake.className = snowflakeClass;
+    container.appendChild(snowflake);
+}
+}
+
+    // Add snowflakes after the page has loaded
+    window.onload = function() {
+    addSnowflakes('.small-snow', 'small', 20);
+    addSnowflakes('.medium-snow', 'medium', 20);
+    // Add other elements like trees and tree parts as needed
+};
+
