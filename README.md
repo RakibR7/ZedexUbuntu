@@ -42,7 +42,8 @@ Following recent changes announced by Discord regarding external CDN links, the 
 
 
 
-ROAD TO SUCCESS ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ROAD TO SUCCESS ------------------------------------------------------------------------------------------------------------------------------------------------
+(Windows)
 
 I can guide you through the process of setting up a local server using Node.js to run your HTML file designed with a Discord theme. Here's a step-by-step guide:
 Step 1: Install Node.js
