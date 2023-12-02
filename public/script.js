@@ -53,15 +53,59 @@ function reassembleFile() {
 }
 
 function runBashScript() {
+    showLoadingAnimation('bash');
     fetch('/run-bash-script')
         .then(response => response.text())
-        .then(data => alert('Bash script executed. Check server console/logs for details.'))
-        .catch(error => console.error('Error running Bash script:', error));
+        .then(data => {
+            hideLoadingAnimation('bash');
+            alert('Bash script executed. Check server console/logs for details.');
+        })
+        .catch(error => {
+            hideLoadingAnimation('bash');
+            console.error('Error running Bash script:', error);
+        });
 }
 
 function runZshScript() {
+    showLoadingAnimation('zsh');
     fetch('/run-zsh-script')
         .then(response => response.text())
-        .then(data => alert('Zsh script executed. Check server console/logs for details.'))
-        .catch(error => console.error('Error running Zsh script:', error));
+        .then(data => {
+            hideLoadingAnimation('zsh');
+            alert('Zsh script executed. Check server console/logs for details.');
+        })
+        .catch(error => {
+            hideLoadingAnimation('zsh');
+            console.error('Error running Zsh script:', error);
+        });
 }
+
+function showLoadingAnimation(scriptType) {
+    const button = scriptType === 'bash' ? document.querySelector('button[onclick="runBashScript()"]') : document.querySelector('button[onclick="runZshScript()"]');
+    button.innerHTML = '<div class="loader"></div>';
+}
+
+function hideLoadingAnimation(scriptType) {
+    const buttonText = scriptType === 'bash' ? 'Check integrity' : 'Clean Chunks';
+    const button = scriptType === 'bash' ? document.querySelector('button[onclick="runBashScript()"]') : document.querySelector('button[onclick="runZshScript()"]');
+    button.textContent = buttonText;
+}
+function createSnowflake() {
+    const snowflake = document.createElement('div');
+    snowflake.classList.add('snowflake');
+    snowflake.textContent = '❄';
+    snowflake.style.left = Math.random() * 100 + '%';
+    snowflake.style.animationDuration = Math.random() * 3 + 2 + 's'; // Random animation duration
+    snowflake.style.opacity = Math.random();
+    snowflake.style.fontSize = Math.random() * 20 + 10 + 'px';
+
+    document.getElementById('snowflakes-container').appendChild(snowflake);
+
+    // Remove the snowflake after it falls
+    setTimeout(() => {
+        snowflake.remove();
+    }, 5000);
+}
+
+// Create a new snowflake every 300 milliseconds
+setInterval(createSnowflake, 300);

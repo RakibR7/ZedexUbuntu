@@ -2,9 +2,19 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const fileUpload = require('express-fileupload');
-const { exec } = require('child_process');
+const { Client, GatewayIntentBits } = require('discord.js');
+
 const app = express();
 const port = 3000;
+
+// Initialize Discord client
+const client = new Client({ intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages] });
+
+client.on('ready', () => {
+    console.log(`Logged in as ${client.user.tag}!`);
+});
+
+client.login('MTE4MDU3MzkxMTQ0NDg4MTUzMA.GXiOOn.kusg2z10E_yJKCYNModN4ZxxQSvW_Ns2W8AKfw');
 
 const chunksDir = path.join(__dirname, 'chunks');
 if (!fs.existsSync(chunksDir)) {
@@ -25,18 +35,16 @@ function saveChunksLocally(fileBuffer, chunkSize, originalFileName) {
     return chunkPaths;
 }
 
-function reassembleFile(originalFileName) {
-    const reassembledFilePath = path.join(chunksDir, `reassembled-${originalFileName}`);
-    const writeStream = fs.createWriteStream(reassembledFilePath);
-
-    fs.readdirSync(chunksDir).filter(fileName => fileName.includes(originalFileName)).sort().forEach(fileName => {
-        const chunkPath = path.join(chunksDir, fileName);
-        const chunkContent = fs.readFileSync(chunkPath);
-        writeStream.write(chunkContent);
-    });
-
-    writeStream.end();
-    return reassembledFilePath;
+// Function to send a file chunk to Discord
+async function sendFileChunkToDiscord(filePath) {
+    try {
+        const channel = await client.channels.fetch('1180586627547021315');
+        await channel.send({ files: [filePath] });
+        console.log(`File chunk sent: ${filePath}`);
+    } catch (error) {
+        console.error(`Error sending file chunk to Discord: ${error}`);
+        throw error; // Important to re-throw the error for proper error handling in Promise.all
+    }
 }
 
 app.post('/upload', async (req, res) => {
@@ -48,43 +56,16 @@ app.post('/upload', async (req, res) => {
     const chunkSize = 8 * 1024 * 1024; // 8 MB chunks
     const chunkPaths = saveChunksLocally(file.data, chunkSize, file.name);
 
-    res.status(200).json({
-        message: 'File uploaded and chunked successfully!',
-        chunkPaths: chunkPaths,
-    });
-});
-
-app.get('/reassemble', (req, res) => {
-    const originalFileName = req.query.fileName;
-
-    if (!originalFileName) {
-        return res.status(400).send('File name is required');
-    }
-
+    // Send all chunks to Discord in parallel
     try {
-        const filePath = reassembleFile(originalFileName);
-        res.status(200).send(`File reassembled successfully: ${filePath}`);
+        await Promise.all(chunkPaths.map(chunkPath => sendFileChunkToDiscord(chunkPath)));
+        res.status(200).json({
+            message: 'File uploaded and all chunks sent to Discord successfully!',
+            chunkPaths: chunkPaths,
+        });
     } catch (error) {
-        res.status(500).send('Error reassembling the file.');
+        res.status(500).send('An error occurred while sending file chunks to Discord.');
     }
-});
-
-app.get('/run-bash-script', (req, res) => {
-    exec('MyNodeProject/public/bash-script.sh', (error, stdout, stderr) => {
-        if (error) {
-            return res.status(500).send('Error executing Bash script.');
-        }
-        res.send('Bash script executed successfully.');
-    });
-});
-
-app.get('/run-zsh-script', (req, res) => {
-    exec('MyNodeProject/public/zsh-script.zsh', (error, stdout, stderr) => {
-        if (error) {
-            return res.status(500).send('Error executing Zsh script.');
-        }
-        res.send('Zsh script executed successfully.');
-    });
 });
 
 app.listen(port, () => {
