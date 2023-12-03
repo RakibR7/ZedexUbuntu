@@ -1,3 +1,5 @@
+require('dotenv').config({ path: 'keys.env' });
+
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -14,7 +16,8 @@ client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.login('MTE4MDU3MzkxMTQ0NDg4MTUzMA.GXiOOn.kusg2z10E_yJKCYNModN4ZxxQSvW_Ns2W8AKfw');
+// Use Discord token from environment variables for security
+client.login(process.env.DISCORD_TOKEN);
 
 const chunksDir = path.join(__dirname, 'chunks');
 if (!fs.existsSync(chunksDir)) {
@@ -24,27 +27,38 @@ if (!fs.existsSync(chunksDir)) {
 app.use(fileUpload());
 app.use(express.static('public'));
 
+app.get('/test', (req, res) => res.send('Server is working'));
+
 function saveChunksLocally(fileBuffer, chunkSize, originalFileName) {
     const chunkPaths = [];
     for (let i = 0; i < fileBuffer.length; i += chunkSize) {
-        const chunk = fileBuffer.slice(i, i + chunkSize);
-        const chunkPath = path.join(chunksDir, `${originalFileName}-chunk-${i}.dat`);
+        const end = Math.min(i + chunkSize, fileBuffer.length);
+        const chunk = fileBuffer.slice(i, end);
+        const chunkPath = path.join(chunksDir, `${originalFileName}-chunk-${i}`);
         fs.writeFileSync(chunkPath, chunk);
         chunkPaths.push(chunkPath);
     }
     return chunkPaths;
 }
 
-// Function to send a file chunk to Discord
 async function sendFileChunkToDiscord(filePath) {
-    try {
-        const channel = await client.channels.fetch('1180586627547021315');
-        await channel.send({ files: [filePath] });
-        console.log(`File chunk sent: ${filePath}`);
-    } catch (error) {
-        console.error(`Error sending file chunk to Discord: ${error}`);
-        throw error; // Important to re-throw the error for proper error handling in Promise.all
+    const channel = await client.channels.fetch(process.env.DISCORD_CHANNEL_ID);
+    for (let attempt = 0; attempt < 3; attempt++) {
+        try {
+            await channel.send({ files: [filePath] });
+            console.log(`File chunk sent: ${filePath}`);
+            fs.unlinkSync(filePath);
+            return;
+        } catch (error) {
+            console.error(`Attempt ${attempt + 1} - Error sending file chunk to Discord: ${error}`);
+            await delay(5000); // Wait for 5 seconds before retrying
+        }
     }
+    throw new Error(`Failed to send file chunk after multiple attempts: ${filePath}`);
+}
+
+function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 app.post('/upload', async (req, res) => {
@@ -53,21 +67,25 @@ app.post('/upload', async (req, res) => {
     }
 
     const file = req.files.file;
-    const chunkSize = 8 * 1024 * 1024; // 8 MB chunks
+    const chunkSize = 7 * 1024 * 1024; // Slightly reduced chunk size
     const chunkPaths = saveChunksLocally(file.data, chunkSize, file.name);
 
-    // Send all chunks to Discord in parallel
-    try {
-        await Promise.all(chunkPaths.map(chunkPath => sendFileChunkToDiscord(chunkPath)));
-        res.status(200).json({
-            message: 'File uploaded and all chunks sent to Discord successfully!',
-            chunkPaths: chunkPaths,
-        });
-    } catch (error) {
-        res.status(500).send('An error occurred while sending file chunks to Discord.');
+    for (const chunkPath of chunkPaths) {
+        try {
+            await sendFileChunkToDiscord(chunkPath);
+            await delay(10000); // Delay between each chunk
+        } catch (error) {
+            console.error(`Detailed error: ${error.stack}`); // Enhanced error logging
+            return res.status(500).send(`Failed to upload file: ${error.message}`);
+        }
     }
+
+    res.status(200).json({
+        message: `File uploaded and sent to Discord successfully!`,
+    });
 });
 
+// Start the server
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
