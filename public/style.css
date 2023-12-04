@@ -1,0 +1,263 @@
+.main-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+body {
+    font-family: 'Whitney', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    background-color: #23272A;
+    color: #99AAB5;
+    margin: 0;
+    overflow: auto;
+}
+
+.container {
+    text-align: center;
+    border-radius: 8px;
+    padding: 30px;
+    background-color: #2C2F33;
+    box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.5);
+    width: auto;
+    max-width: 100%;
+    animation: fadeIn 1s ease-out;
+}
+
+.title {
+    font-size: 28px;
+    color: #FFFFFF;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.file-upload-container {
+    order: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    justify-content: center;
+}
+
+.btn {
+    border: 1px solid #7289DA;
+    background-color: #7289DA;
+    color: #FFFFFF;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+
+.btn:hover {
+    transform: translate3d(0px, -5px, 0px); /* Moves the button up by 5px */
+    transition: transform .2s ease-in-out;
+}
+
+
+/* Keyframes for rotating clockwise for the buttons */
+@keyframes rotateIconClockwise {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Keyframes for rotating counterclockwise */
+@keyframes rotateIconCounterClockwise {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(-360deg); }
+}
+
+/* Apply the counterclockwise rotation by default */
+.btn-upload i {
+    animation: rotateIconCounterClockwise 1s linear infinite;
+    animation-play-state: paused; /* Pause the animation initially */
+}
+
+/* Apply the clockwise rotation on hover */
+.btn-upload:hover i {
+    animation: rotateIconClockwise 1s linear infinite;
+    animation-play-state: running; /* Resume the animation on hover */
+}
+/*buttons animation END*/
+
+
+#ascii-art-container {
+    width: 80%; /* Adjust width as needed */
+    max-width: 600px; /* Set a maximum width */
+    height: 200px; /* Set a fixed height */
+    overflow: hidden; /* Add scrollbars if content is larger than the container */
+    white-space: pre; /* Maintain whitespace as it is */
+    font-family: 'Courier New', monospace; /* Monospace font for ASCII art */
+    font-size: 12px; /* Adjust font size as needed */
+    text-align: center; /* Center the ASCII art */
+    border: 1px solid #ddd; /* Optional border */
+    margin: 20px auto; /* Add top and bottom margin, auto horizontally centers */
+    padding: 10px; /* Some padding inside the container */
+    background-color: rgb(0, 0, 0); /* Optional background color */
+    display: flex; /* Flexbox to align content */
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+}
+
+
+/*stats page*/
+.stats-container {
+    width: auto; /* Adjust the width as needed */
+    max-width: 600px; /* or any other max-width that fits your design */
+    padding: 20px;
+    margin: 0 auto; /* This centers the box if the width is less than the parent container */
+    /* Other styles... */
+}
+
+
+.stat {
+    margin: 10px; /* Space between stats */
+    flex-basis: 20%; /* Each stat takes up 20% of the container width */
+    text-align: center; /* Center the text within each stat */
+}
+
+.stat-title {
+    font-size: 1em; /* Match your page's font sizing */
+    font-weight: bold; /* Bold title */
+    margin-bottom: 0.5em; /* Space between title and value */
+}
+
+.stat-value {
+    font-size: 1.5em; /* Larger text for emphasis */
+    margin-bottom: 0.5em; /* Space between value and description */
+}
+
+.stat-desc {
+    font-size: 0.85em; /* Smaller text for description */
+    color: #7289DA; /* Slight color difference for less emphasis */
+}  
+
+/* Parent container */
+.content-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center children horizontally */
+    justify-content: center; /* Center children vertically */
+    height: 50%; /* Use the full viewport height */
+    gap: 20px; /* Space between children */         
+}
+
+
+/*for mobile*/
+@media (max-width: 768px) {
+    .content-wrapper {
+        flex-direction: column; /* Stack containers on smaller screens */
+    }
+}
+
+
+
+
+
+
+
+
+#fileName {
+    color: #99AAB5;
+    min-width: 200px;
+    display: inline-block;
+    text-align: left;
+    transition: color 0.3s;
+}
+
+#fileName:hover {
+    color: #FFFFFF;
+}
+
+#fileInput {
+    display: none;
+}
+
+.loader {
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #7289DA;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#snowflakes-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.snowflake {
+    position: absolute;
+    top: -10px;
+    color: #fff;
+    opacity: 0.8;
+    font-size: 1em;
+    line-height: 1em;
+    pointer-events: none;
+    animation: float 5s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translate3d(0px, 0px, 0px);
+    }
+    50% {
+        transform: translate3d(0px, -10px, 0px); /* Moves up and then back */
+    }
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+@keyframes slideInFromBottom {
+    0% {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    100% {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.fade-in {
+    opacity: 0;
+    transform: translate3d(0px, 20px, 0px);
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    to {
+        opacity: 1;
+        transform: translate3d(0px, 0px, 0px);
+    }
+}
+
+.slide-in-bottom {
+    animation: slideInFromBottom 0.3s ease-out; /* Faster and from the bottom */
+}
+
+
+
+
+
