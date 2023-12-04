@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord-Themed File Upload</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Adding FontAwesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <!-- Add DaisyUI CSS -->
+</head>
+<body>
+<div id="ascii-art-container"></div>
+
+
+<div class="main-content">
+<div id="snowflakes-container"></div>
+
+<div class="content-wrapper"> 
+    <div class="container">
+        <div class="title">Files</div>
+            <div class="file-upload-container">
+                <input type="file" id="fileInput" class="file-input file-input-bordered w-full max-w-xs" />
+                <!-- Applying DaisyUI classes to buttons -->
+                <button class="btn" onclick="document.getElementById('fileInput').click()">
+                    <i class="fa fa-folder-open"></i> Choose File
+                </button>
+                <span id="fileName">No file chosen</span>
+                <button class="btn btn-upload" onclick="uploadFile()">
+                    <i class="fa fa-upload"></i> Upload
+                </button>
+                <button class="btn btn-download" onclick="reassembleFile()">
+                    <i class="fa fa-download"></i> Download
+                </button>
+                <button class="btn" onclick="runBashScript()">
+                    <i class="fa fa-check-circle"></i> Check Integrity
+                </button>
+                <button class="btn" onclick="runZshScript()">
+                    <i class="fa fa-trash"></i> Clean Chunks
+                </button>  
+            </div>
+    </div>
+    <div class="container">
+    <!-- Stats Container -->
+        <div class="stats-container" id="fileStats" style="display: inside;">
+
+
+            
+
+            <progress id="progressBar" class="progress progress-primary w-56" value="0" max="100"></progress>
+            <div id="currentChunkStatus">Uploading chunk: 0 of 0</div>
+            <div id=" "> </div>
+            
+            <div class="stat">
+                <div class="stat-title">File Size</div>
+                <div class="stat-value" id="fileSize">0 KB</div>
+                <div class="stat-desc">Size of the chosen file</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-title">File Format</div>
+                <div class="stat-value" id="fileFormat">N/A</div>
+                <div class="stat-desc">Format of the chosen file</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-title">Upload Date</div>
+                <div class="stat-value" id="uploadDate">N/A</div>
+                <div class="stat-desc">Date of file selection</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-title">Chunks Uploaded</div>
+                <div class="stat-value" id="chunksUploaded">0</div>
+                <div class="stat-desc">Number of file chunks uploaded</div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of content for stats -->
+
+<script src="client.js"></script>
+<script src="script.js"></script>
+
+
+</body>
+</html>
