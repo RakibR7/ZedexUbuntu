@@ -93,27 +93,32 @@ function updateFileStats(file) {
     fileNameDisplay.textContent = file.name;
 }
 
+async function reassembleFile(uniqueIdentifier, originalFileName, chunkDir) {
+    const outputFile = path.join(__dirname, 'output', originalFileName);
+    const writeStream = fs.createWriteStream(outputFile);
 
+    try {
+        // Read directory and filter out relevant chunks
+        const files = fs.readdirSync(chunkDir);
+        const relevantChunks = files.filter(file => file.startsWith(uniqueIdentifier))
+                                    .sort(/* sorting logic based on your naming convention */);
 
-function reassembleFile() {
-    if (fileInput.files.length > 0) {
-        showLoadingAnimation('reassemble'); // Show loading animation
-        const file = fileInput.files[0];
-        fetch(`/reassemble?fileName=${encodeURIComponent(file.name)}`)
-            .then(response => response.text())
-            .then(data => {
-                alert('File reassembled successfully. Check server console/logs for details.');
-                hideLoadingAnimation('reassemble'); // Hide loading animation
-            })
-            .catch(error => {
-                console.error('Error reassembling the file:', error);
-                alert('Error reassembling the file.');
-                hideLoadingAnimation('reassemble'); // Hide loading animation
-            });
-    } else {
-        alert('Please upload a file first.');
+        for (const chunkName of relevantChunks) {
+            const chunkPath = path.join(chunkDir, chunkName);
+            const chunkContent = fs.readFileSync(chunkPath);
+            writeStream.write(chunkContent);
+            fs.unlinkSync(chunkPath); // Optionally, delete the chunk after it has been used
+        }
+
+        writeStream.end();
+        return outputFile;
+    } catch (error) {
+        console.error('Error in reassembling file:', error);
+        throw error; // rethrow the error for further handling
     }
 }
+
+
 
 function runBashScript() {
     showLoadingAnimation('bash');
@@ -143,14 +148,7 @@ function runZshScript() {
         });
 }
 
-function showLoadingAnimation(context) {
-    // Add context-specific logic for loading animation
-    // Example: Change button text or add a loader to a specific area
-}
 
-function hideLoadingAnimation(context) {
-    // Hide the loader and revert any changes made by showLoadingAnimation
-}
 
 // Create a new snowflake every 300 milliseconds
 setInterval(createSnowflake, 300);
@@ -184,5 +182,5 @@ function createSnowflake() {
     // Remove the snowflake after it falls
     setTimeout(() => {
         snowflake.remove();
-    }, 5000);
+    }, 5000);    
 }
