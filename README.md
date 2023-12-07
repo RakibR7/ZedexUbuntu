@@ -42,15 +42,15 @@ Following recent changes announced by Discord regarding external CDN links, the 
 
 
 
-ROAD TO SUCCESS -----------------------------------------------------------------------------------------------------------------------------------------------
+ROAD TO SUCCESS -----------------------------------------------------------------------------------------------------------------------
 
 Chunk Naming Convention:
-The code shows that when files are uploaded in chunks, they are named using a unique identifier and a chunk index (e.g., 3f99cf-chunk-0). This matches the naming convention shown in the image you provided.
+The code shows that when files are uploaded in chunks, they are named using a unique identifier and a chunk index (e.g., 3f99cf-chunk-0).
 
 Downloading Chunks:
 The server-side code includes an endpoint at /download-chunks which, when given a uniqueIdentifier, will fetch related file chunks from Discord using the function fetchChunksFromDiscord(uniqueIdentifier) and save them locally using saveChunksToLocal(files, uniqueIdentifier, downloadedChunksDir).
-Reassembling the File:
 
+Reassembling the File:
 The function reassembleFile(uniqueIdentifier, outputDir) is designed to look for chunks in a directory, sort them according to their chunk index, and then reassemble them into a single file. It matches chunks using the uniqueIdentifier which is consistent with the file naming in your image.
 
 File Upload to Discord:
