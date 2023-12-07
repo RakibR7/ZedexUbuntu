@@ -44,6 +44,61 @@ Following recent changes announced by Discord regarding external CDN links, the 
 
 ROAD TO SUCCESS -----------------------------------------------------------------------------------------------------------------------------------------------
 
+Chunk Naming Convention:
+The code shows that when files are uploaded in chunks, they are named using a unique identifier and a chunk index (e.g., 3f99cf-chunk-0). This matches the naming convention shown in the image you provided.
+
+Downloading Chunks:
+The server-side code includes an endpoint at /download-chunks which, when given a uniqueIdentifier, will fetch related file chunks from Discord using the function fetchChunksFromDiscord(uniqueIdentifier) and save them locally using saveChunksToLocal(files, uniqueIdentifier, downloadedChunksDir).
+Reassembling the File:
+
+The function reassembleFile(uniqueIdentifier, outputDir) is designed to look for chunks in a directory, sort them according to their chunk index, and then reassemble them into a single file. It matches chunks using the uniqueIdentifier which is consistent with the file naming in your image.
+
+File Upload to Discord:
+The code contains functionality to upload files to Discord through the sendFileChunkToDiscord(filePath) function. It sends chunks to a specific Discord channel, and if the upload fails, it retries up to three times.
+
+Environment Configuration:
+The server utilizes environment variables (stored in a .env file) for sensitive information like the Discord token and channel ID, which is a best practice for security.
+
+Middleware and Static Files:
+It uses fileUpload() middleware for handling file uploads and serves static files from a public directory.
+Routes for File Handling:
+
+Several routes are defined for different aspects of file handling, such as /upload for uploading chunks, /files for listing files associated with a unique identifier, /reassemble-and-download for reassembling and downloading the reassembled file, and /files/metadata for retrieving metadata of files.
+
+Error Handling and Logging:
+The code contains error handling for various operations and logs messages to the console to track the process flow and any issues that arise.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Method of reasembly:
 
 The method I used to reassemble the file chunks into a single file is based on a straightforward binary concatenation approach. Here's a breakdown of the process:
