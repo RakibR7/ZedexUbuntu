@@ -1,145 +1,85 @@
-const fileInput = document.getElementById('fileInput');
-const fileNameDisplay = document.getElementById('fileName');
-
-fileInput.addEventListener('change', function() {
-    if(fileInput.files.length > 0) {
-        const file = fileInput.files[0];
-        document.getElementById('fileSize').textContent = (file.size / 1024).toFixed(2) + ' KB';
-        document.getElementById('fileFormat').textContent = file.type || 'Unknown';
-        document.getElementById('uploadDate').textContent = new Date().toLocaleDateString();
-        document.getElementById('fileStats').style.display = 'block';
-        fileNameDisplay.textContent = fileInput.files.length > 0 ? fileInput.files[0].name : 'No file chosen';
-    }
-});
-
 document.addEventListener('DOMContentLoaded', function() {
+    // Ensure the function 'updateBackgroundWithAsciiArt' is defined or remove this call if not needed
+    updateBackgroundWithAsciiArt();
+
     const title = document.querySelector('.title');
     const fileUploadContainer = document.querySelector('.file-upload-container');
     const buttons = document.querySelectorAll('.btn');
 
     title.classList.add('fade-in');
-
     fileUploadContainer.classList.add('slide-in-bottom');
-
-    buttons.forEach((button, index) => {
-        // Apply slide-in from bottom animation to buttons
-        //setTimeout(() => button.classList.add('slide-in-bottom'), 300 + (index * 10)); // Reduced delay for faster animation
-    });
 });
 
+const fileInput = document.getElementById('fileInput');
+const fileNameDisplay = document.getElementById('fileName');
+const progressBar = document.getElementById('progressBar');
 
+fileInput.addEventListener('change', function() {
+    if (fileInput.files.length > 0) {
+        updateFileStats(fileInput.files[0]); // Update file stats for the selected file
+    }
+});
 
+function updateFileStats(file) {
+    document.getElementById('fileSize').textContent = (file.size / 1024).toFixed(2) + ' KB';
+    document.getElementById('fileFormat').textContent = file.type || 'Unknown';
+    document.getElementById('uploadDate').textContent = new Date().toLocaleDateString();
+    document.getElementById('fileStats').style.display = 'block';
+    fileNameDisplay.textContent = file.name;
+}
+
+async function reassembleFile() {
+    // Assume the fileName is stored in a span with id="fileName"
+    const fileNameElement = document.getElementById('fileName');
+    const fileName = fileNameElement.textContent || fileNameElement.innerText;
+
+    // Update the URL with your actual server information and port
+    const url = `http://localhost:3000/retrieve?fileName=${encodeURIComponent(fileName)}`;
+
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const blob = await response.blob();
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = downloadUrl;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(downloadUrl);
+        alert('File downloaded successfully.');
+    } catch (error) {
+        console.error('Error downloading file:', error);
+        alert('Error downloading file.');
+    }
+}
 
 
 
 async function uploadFile() {
     if (fileInput.files.length > 0) {
         const file = fileInput.files[0];
-        const chunkSize = 8 * 1024 * 1024; // 8 MB chunk size
-        const totalChunks = Math.ceil(file.size / chunkSize);
-        const progressBar = document.getElementById('progressBar');
+        const formData = new FormData();
+        formData.append('file', file, file.name);
 
-        for (let i = 0; i < totalChunks; i++) {
-            const chunk = file.slice(i * chunkSize, (i + 1) * chunkSize);
-            const formData = new FormData();
-            formData.append('file', chunk, `${file.name}-chunk-${i}`);
-            document.getElementById('chunksUploaded').textContent = i + 1;
-            try {
-                await fetch('/upload', {
-                    method: 'POST',
-                    body: formData,
-                });
-                // Update the progress bar
-                const progress = Math.round((i + 1) / totalChunks * 100);
-                progressBar.style.setProperty('--value', progress);
-                progressBar.textContent = `${progress}%`;
-            } catch (error) {
-                console.error(`Error uploading chunk ${i + 1}:`, error);
-                alert(`There was an error uploading chunk ${i + 1}`);
-                return;
-            }
+        try {
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+            progressBar.value = 100; // Update progress bar to 100% on successful upload
+            alert('File uploaded successfully.');
+        } catch (error) {
+            console.error(`Error uploading file:`, error);
+            alert(`There was an error uploading the file`);
         }
-
-        alert('All chunks uploaded successfully.');
     } else {
         alert('Please choose a file first.');
     }
 }
 
 
-function reassembleFile() {
-    if (fileInput.files.length > 0) {
-        showLoadingAnimation('reassemble'); // Show loading animation
-        const file = fileInput.files[0];
-        fetch(`/reassemble?fileName=${encodeURIComponent(file.name)}`)
-            .then(response => response.text())
-            .then(data => {
-                alert('File reassembled successfully. Check server console/logs for details.');
-                hideLoadingAnimation('reassemble'); // Hide loading animation
-            })
-            .catch(error => {
-                console.error('Error reassembling the file:', error);
-                alert('Error reassembling the file.');
-                hideLoadingAnimation('reassemble'); // Hide loading animation
-            });
-    } else {
-        alert('Please upload a file first.');
-    }
-}
-
-function runBashScript() {
-    showLoadingAnimation('bash');
-    fetch('/run-bash-script')
-        .then(response => response.text())
-        .then(data => {
-            hideLoadingAnimation('bash');
-            alert('Bash script executed. Check server console/logs for details.');
-        })
-        .catch(error => {
-            hideLoadingAnimation('bash');
-            console.error('Error running Bash script:', error);
-        });
-}
-
-function runZshScript() {
-    showLoadingAnimation('zsh');
-    fetch('/run-zsh-script')
-        .then(response => response.text())
-        .then(data => {
-            hideLoadingAnimation('zsh');
-            alert('Zsh script executed. Check server console/logs for details.');
-        })
-        .catch(error => {
-            hideLoadingAnimation('zsh');
-            console.error('Error running Zsh script:', error);
-        });
-}
-
-function showLoadingAnimation(context) {
-    // Add context-specific logic for loading animation
-    // Example: Change button text or add a loader to a specific area
-}
-
-function hideLoadingAnimation(context) {
-    // Hide the loader and revert any changes made by showLoadingAnimation
-}
-
-// Create a new snowflake every 300 milliseconds
-setInterval(createSnowflake, 300);
-
-function createSnowflake() {
-    const snowflake = document.createElement('div');
-    snowflake.classList.add('snowflake');
-    snowflake.textContent = '❄';
-    snowflake.style.left = Math.random() * 100 + '%';
-    snowflake.style.animationDuration = Math.random() * 3 + 2 + 's'; // Random animation duration
-    snowflake.style.opacity = Math.random();
-    snowflake.style.fontSize = Math.random() * 20 + 10 + 'px';
-
-    document.getElementById('snowflakes-container').appendChild(snowflake);
-
-    // Remove the snowflake after it falls
-    setTimeout(() => {
-        snowflake.remove();
-    }, 5000);
-}
+// Add any additional functions or event listeners you need below

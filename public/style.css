@@ -189,6 +189,21 @@ body {
     vertical-align: middle;
 }
 
+.progress-bar-container {
+    width: 100%;
+    background-color: #eee;
+    padding: 3px;
+    border-radius: 5px;
+}
+
+.progress-bar {
+    height: 20px;
+    background-color: blue;
+    width: 0%; /* Initial width */
+    border-radius: 5px;
+}
+
+
 #snowflakes-container {
     position: absolute;
     top: 0;
